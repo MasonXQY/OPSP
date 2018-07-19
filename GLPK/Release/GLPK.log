@@ -1,0 +1,109 @@
+﻿生成启动时间为 2017/12/26 14:51:50。
+     1>项目“D:\FangCloudSync\科研\5-Code\GOPT\GLPK\GLPK.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在创建“Release\GLPK.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Iinclude /Zi /nologo /W3 /WX- /O2 /Ob1 /Oy- /D _CRT_SECURE_NO_WARNINGS /D WIN32 /D NDEBUG /D _LIB /D _VC80_UPGRADE=0x0600 /D _MBCS /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /FR"Release\\" /Gd /TC /analyze- /errorReport:prompt src\glpavl.c src\glpdmp.c src\glpiet.c src\glpinv.c src\glpios1.c src\glpios2.c src\glpios3.c src\glpipm.c src\glplib1a.c src\glplib1b.c src\glplib2.c src\glplib3.c src\glplpp1.c src\glplpp2.c src\glplpx1.c src\glplpx2.c src\glplpx3.c src\glplpx4.c src\glplpx5.c src\glplpx6a.c src\glplpx6b.c src\glplpx6c.c src\glplpx6d.c src\glplpx7.c src\glplpx8a.c src\glplpx8b.c src\glplpx8c.c src\glplpx8d.c src\glplpx8e.c src\glpluf.c src\glpmat.c src\glpmip1.c src\glpmip2.c src\glpmpl1.c src\glpmpl2.c src\glpmpl3.c src\glpmpl4.c src\glpqmd.c src\glprng.c src\glpspx1.c src\glpspx2.c src\glpstr.c src\glptsp.c
+         glpavl.c
+         glpdmp.c
+         glpiet.c
+         glpinv.c
+         glpios1.c
+         glpios2.c
+         glpios3.c
+         glpipm.c
+         glplib1a.c
+         glplib1b.c
+         glplib2.c
+         glplib3.c
+         glplpp1.c
+         glplpp2.c
+         glplpx1.c
+         glplpx2.c
+         glplpx3.c
+         glplpx4.c
+         glplpx5.c
+         glplpx6a.c
+         正在生成代码...
+         正在编译...
+         glplpx6b.c
+         glplpx6c.c
+         glplpx6d.c
+         glplpx7.c
+         glplpx8a.c
+         glplpx8b.c
+         glplpx8c.c
+         glplpx8d.c
+         glplpx8e.c
+         glpluf.c
+         glpmat.c
+         glpmip1.c
+         glpmip2.c
+         glpmpl1.c
+         glpmpl2.c
+         glpmpl3.c
+         glpmpl4.c
+         glpqmd.c
+         glprng.c
+         glpspx1.c
+         正在生成代码...
+         正在编译...
+         glpspx2.c
+         glpstr.c
+         glptsp.c
+         正在生成代码...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"D:\FangCloudSync\科研\5-Code\GOPT\Release\GLPK.lib" /NOLOGO Release\glpavl.obj
+         Release\glpdmp.obj
+         Release\glpiet.obj
+         Release\glpinv.obj
+         Release\glpios1.obj
+         Release\glpios2.obj
+         Release\glpios3.obj
+         Release\glpipm.obj
+         Release\glplib1a.obj
+         Release\glplib1b.obj
+         Release\glplib2.obj
+         Release\glplib3.obj
+         Release\glplpp1.obj
+         Release\glplpp2.obj
+         Release\glplpx1.obj
+         Release\glplpx2.obj
+         Release\glplpx3.obj
+         Release\glplpx4.obj
+         Release\glplpx5.obj
+         Release\glplpx6a.obj
+         Release\glplpx6b.obj
+         Release\glplpx6c.obj
+         Release\glplpx6d.obj
+         Release\glplpx7.obj
+         Release\glplpx8a.obj
+         Release\glplpx8b.obj
+         Release\glplpx8c.obj
+         Release\glplpx8d.obj
+         Release\glplpx8e.obj
+         Release\glpluf.obj
+         Release\glpmat.obj
+         Release\glpmip1.obj
+         Release\glpmip2.obj
+         Release\glpmpl1.obj
+         Release\glpmpl2.obj
+         Release\glpmpl3.obj
+         Release\glpmpl4.obj
+         Release\glpqmd.obj
+         Release\glprng.obj
+         Release\glpspx1.obj
+         Release\glpspx2.obj
+         Release\glpstr.obj
+         Release\glptsp.obj
+         GLPK.vcxproj -> D:\FangCloudSync\科研\5-Code\GOPT\Release\GLPK.lib
+       BscMake:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\bscmake.exe /nologo /o"D:\FangCloudSync\科研\5-Code\GOPT\Release\GLPK.bsc" Release\glpavl.sbr Release\glpdmp.sbr Release\glpiet.sbr Release\glpinv.sbr Release\glpios1.sbr Release\glpios2.sbr Release\glpios3.sbr Release\glpipm.sbr Release\glplib1a.sbr Release\glplib1b.sbr Release\glplib2.sbr Release\glplib3.sbr Release\glplpp1.sbr Release\glplpp2.sbr Release\glplpx1.sbr Release\glplpx2.sbr Release\glplpx3.sbr Release\glplpx4.sbr Release\glplpx5.sbr Release\glplpx6a.sbr Release\glplpx6b.sbr Release\glplpx6c.sbr Release\glplpx6d.sbr Release\glplpx7.sbr Release\glplpx8a.sbr Release\glplpx8b.sbr Release\glplpx8c.sbr Release\glplpx8d.sbr Release\glplpx8e.sbr Release\glpluf.sbr Release\glpmat.sbr Release\glpmip1.sbr Release\glpmip2.sbr Release\glpmpl1.sbr Release\glpmpl2.sbr Release\glpmpl3.sbr Release\glpmpl4.sbr Release\glpqmd.sbr Release\glprng.sbr Release\glpspx1.sbr Release\glpspx2.sbr Release\glpstr.sbr Release\glptsp.sbr
+       FinalizeBuildStatus:
+         正在删除文件“Release\GLPK.unsuccessfulbuild”。
+         正在对“Release\GLPK.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“D:\FangCloudSync\科研\5-Code\GOPT\GLPK\GLPK.vcxproj”(build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:09.69

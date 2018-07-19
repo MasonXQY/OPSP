@@ -1,0 +1,25 @@
+﻿生成启动时间为 2017/12/26 14:52:00。
+     1>项目“D:\FangCloudSync\科研\5-Code\GOPT\BLPK\BLPK.vcxproj”在节点 3 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在创建“Release\BLPK.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Ob1 /Oy- /D _CRT_SECURE_NO_WARNINGS /D WIN32 /D NDEBUG /D _LIB /D _VC80_UPGRADE=0x0600 /D _MBCS /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /FR"Release\\" /Gd /TC /analyze- /errorReport:prompt blp.c la.c mtx.c
+         blp.c
+         la.c
+         mtx.c
+         正在生成代码...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"D:\FangCloudSync\科研\5-Code\GOPT\Release\BLPK.lib" /NOLOGO Release\blp.obj
+         Release\la.obj
+         Release\mtx.obj
+         BLPK.vcxproj -> D:\FangCloudSync\科研\5-Code\GOPT\Release\BLPK.lib
+       BscMake:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\bscmake.exe /nologo /o"D:\FangCloudSync\科研\5-Code\GOPT\Release\BLPK.bsc" Release\blp.sbr Release\la.sbr Release\mtx.sbr
+       FinalizeBuildStatus:
+         正在删除文件“Release\BLPK.unsuccessfulbuild”。
+         正在对“Release\BLPK.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“D:\FangCloudSync\科研\5-Code\GOPT\BLPK\BLPK.vcxproj”(build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:01.01
