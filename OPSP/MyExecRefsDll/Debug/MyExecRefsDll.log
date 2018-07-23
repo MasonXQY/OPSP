@@ -1,0 +1,4 @@
+﻿  stdafx.c
+  MyExecRefsDll.c
+d:\fangcloudsync\dropbox\github\windpowsimudll\opsp\myexecrefsdll\myexecrefsdll.c(11): warning C4013: “wpsmain”未定义；假设外部返回 int
+  MyExecRefsDll.vcxproj -> D:\FangCloudSync\Dropbox\Github\WindPowSimuDll\OPSP\Debug\MyExecRefsDll.exe
