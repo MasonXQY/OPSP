@@ -38,9 +38,6 @@
     <ClCompile Include="Wind.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WPOS_Sub.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="WPS.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -51,6 +48,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WPS_Sub.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "gConstant.h"
 
-//WPOS_sub/////////////////////////////////////////////////////////////////////////////
+//WPS_sub/////////////////////////////////////////////////////////////////////////////
 void app_err(int nErrorCode,char *fmt, ...);
 
 void app_stat_wind_typical_curve(app* me,double *daLoad,double *dapower,int nCount,\
@@ -28,9 +28,9 @@ void app_out_wind_ferror(app* me);
 
 void app_out_wind_fpower_stat( app* me);
 
-void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TIMES],int nStartDate, int nEndDate);
+void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPS_SIMULATION_TIMES],int nStartDate, int nEndDate);
 
-void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TIMES],mtx* pmWindfPower[WPOS_SIMULATION_TIMES],int nStartDate, int nEndDate);
+void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPS_SIMULATION_TIMES],mtx* pmWindfPower[WPS_SIMULATION_TIMES],int nStartDate, int nEndDate);
 
 //pa//////////////////////////////////////////////////////////////////////////////
 pa* pa_create();

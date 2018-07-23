@@ -13,7 +13,7 @@ typedef char str[STR_LEN+1];
 #define STR_LEN_LONG 1024
 typedef char str_long[STR_LEN_LONG+1];
 #define DAYS_PER_YEAR 365
-#define WPOS_MAX_PROJECT 100 /*计算的最大方案数*/
+#define WPS_MAX_PROJECT 100 /*计算的最大方案数*/
 
 /*pa是一个通用目录的结构，n表示目录中含有的条目数，cap表示目录能够容纳的条目数，
 ** buf是指向指针数组的指针，buf[i]表示目录中第i个条目的地址，他一般都指向描述系统元件的属性的结构体*/
@@ -177,7 +177,7 @@ typedef struct app
 	char caInPathName[255];             /*输入数据文件的文件路径*/
 	char caOutPathName[255];            /*输出数据文件的文件路径*/ 
 
-	char sDir[WPOS_MAX_PROJECT][255]; /*存放读入目录*/
+	char sDir[WPS_MAX_PROJECT][255]; /*存放读入目录*/
 	char sCursDir[255]; /*当前运行目录*/
 	int	 nDir; /*读入目录个数*/
 

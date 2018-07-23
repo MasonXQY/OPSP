@@ -21,14 +21,14 @@
 #define US_IN_APP_OFF 0/*指定关机*/
 
 /*程序返回值*/
-#define WPOS_EXIT_SUCCESS 0
-#define WPOS_EXIT_FAILURE 1
-#define WPOS_EXIT_PARALACK 2
-#define WPOS_EXIT_PARAERROR 3
-#define WPOS_OPEN_OUTPUT_FILE_FAILURE 5
-#define WPOS_OPEN_INPUT_FILE_FAILURE 6
+#define WPS_EXIT_SUCCESS 0
+#define WPS_EXIT_FAILURE 1
+#define WPS_EXIT_PARALACK 2
+#define WPS_EXIT_PARAERROR 3
+#define WPS_OPEN_OUTPUT_FILE_FAILURE 5
+#define WPS_OPEN_INPUT_FILE_FAILURE 6
 
-#define  WPOS_RELIABILITY_STEP 1
+#define  WPS_RELIABILITY_STEP 1
 
 #define TINY 0.000001
 #define INFINITY 100000000
@@ -36,16 +36,16 @@
 #define TRUE 1
 #define FALSE 0
 
-#define WPOS_DISTRIBUTION_INTERVAL 20 //风电输出概率分布的点数，目前默认为分为20段。
-#define WPOS_MIN_OUTPUT_CONFIDENCE 0.95 //求保证出力时的置信度
-#define WPOS_MAX_OUTPUT_CONFIDENCE 0.95 //求最大出力时的置信度
-#define WPOS_MIN_REGULATION_CONFIDENCE 0.99 //求理论正反调峰出力时的置信度
-#define WPOS_MAX_REGULATION_CONFIDENCE 0.99 //求理论正反调峰出力时的置信度
-#define WPOS_MIN_RESERVE_CONFIDENCE 0.99 //求最大负备用时的置信度
-#define WPOS_MAX_RESERVE_CONFIDENCE 0.99 //求最大正备用的置信度
+#define WPS_DISTRIBUTION_INTERVAL 20 //风电输出概率分布的点数，目前默认为分为20段。
+#define WPS_MIN_OUTPUT_CONFIDENCE 0.95 //求保证出力时的置信度
+#define WPS_MAX_OUTPUT_CONFIDENCE 0.95 //求最大出力时的置信度
+#define WPS_MIN_REGULATION_CONFIDENCE 0.99 //求理论正反调峰出力时的置信度
+#define WPS_MAX_REGULATION_CONFIDENCE 0.99 //求理论正反调峰出力时的置信度
+#define WPS_MIN_RESERVE_CONFIDENCE 0.99 //求最大负备用时的置信度
+#define WPS_MAX_RESERVE_CONFIDENCE 0.99 //求最大正备用的置信度
 
-#define WPOS_POS_NEG_REGULATION 0.025 //理论正反调峰判定门槛，如果风电改变系统峰谷差的幅度超过这一比值，则认为是正调峰或反调峰。
+#define WPS_POS_NEG_REGULATION 0.025 //理论正反调峰判定门槛，如果风电改变系统峰谷差的幅度超过这一比值，则认为是正调峰或反调峰。
 
-#define WPOS_SIMULATION_TIMES 12/*风电场出力模拟次数（每次模拟均做这么多次，选择其中电量最接近平均电量的那组数据作为最终模拟数据）*/
+#define WPS_SIMULATION_TIMES 12/*风电场出力模拟次数（每次模拟均做这么多次，选择其中电量最接近平均电量的那组数据作为最终模拟数据）*/
 
 #endif __G_CONSTANT_ZHANGNING_130307_H__

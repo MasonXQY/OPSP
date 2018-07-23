@@ -798,8 +798,8 @@ void Generate_wind_power_StatisticsWindPower(app *me)
 		memset(pWindPowerPDF,0,sizeof(wind_powerPDF));
 		pWindPowerPDF->nDate=nDateStart;
 		pWindPowerPDF->nDate2=nDateEnd;
-		pWindPowerPDF->PowerPDF=mtx_create((int)(dWindFarmCap/WPOS_RELIABILITY_STEP)+1,1,0);
-		mtx_ini_zeros(pWindPowerPDF->PowerPDF,(int)(dWindFarmCap/WPOS_RELIABILITY_STEP)+1,1);
+		pWindPowerPDF->PowerPDF=mtx_create((int)(dWindFarmCap/WPS_RELIABILITY_STEP)+1,1,0);
+		mtx_ini_zeros(pWindPowerPDF->PowerPDF,(int)(dWindFarmCap/WPS_RELIABILITY_STEP)+1,1);
 		pa_add(&me->aWindPowerPDF,pWindPowerPDF);
 
 		nPoints=0;
@@ -830,8 +830,8 @@ void Generate_wind_power_StatisticsWindPower(app *me)
 				if ((int)dWindPower[j]<=(int)dWindFarmCap)
 				{
 					nPoints++;
-					mtx_set_element(pWindPowerPDF->PowerPDF,(int)(dWindPower[j]/WPOS_RELIABILITY_STEP+0.4999999999999)+1,1,\
-						mtx_get_element(pWindPowerPDF->PowerPDF,(int)(dWindPower[j]/WPOS_RELIABILITY_STEP+0.4999999999999)+1,1)+1);
+					mtx_set_element(pWindPowerPDF->PowerPDF,(int)(dWindPower[j]/WPS_RELIABILITY_STEP+0.4999999999999)+1,1,\
+						mtx_get_element(pWindPowerPDF->PowerPDF,(int)(dWindPower[j]/WPS_RELIABILITY_STEP+0.4999999999999)+1,1)+1);
 				}
 			}
 		}
@@ -901,7 +901,7 @@ double calc_LOLPorEENS(mtx* z,double dCapa, double dFor,int nLoad,int nIsEENS)
 	double d1_FOR=1-dFOR;
 	double dLE=0;
 	int nSizeOriginal,nSizeplus,m;
-	int nUnitCapa=(int)(dCapa/WPOS_RELIABILITY_STEP+0.4999999999999);
+	int nUnitCapa=(int)(dCapa/WPS_RELIABILITY_STEP+0.4999999999999);
 
 	nSizeOriginal=z->m;
 	nSizeplus=nSizeOriginal+nUnitCapa;
@@ -941,7 +941,7 @@ double calc_LOLPorEENS(mtx* z,double dCapa, double dFor,int nLoad,int nIsEENS)
 		if(nIsEENS==0)
 			dLE+=data[m];
 		else 
-			dLE+=data[m]*(nLoad-m)*WPOS_RELIABILITY_STEP;
+			dLE+=data[m]*(nLoad-m)*WPS_RELIABILITY_STEP;
 	}
 
 	free(data);

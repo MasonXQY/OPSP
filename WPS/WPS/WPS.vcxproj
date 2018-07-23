@@ -168,7 +168,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Wind.c" />
-    <ClCompile Include="WPOS_Sub.c" />
+    <ClCompile Include="WPS_Sub.c" />
     <ClCompile Include="WPS.c" />
   </ItemGroup>
   <ItemGroup>

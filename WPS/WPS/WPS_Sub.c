@@ -32,7 +32,7 @@ int util_double2int(double d)
 }
 /*HOOK printf*/
 static FILE* fInfo=NULL;
-static void WPOS_printf(char *fmt, ...)
+static void WPS_printf(char *fmt, ...)
 {
       va_list arg;
       char msg[4095+1];
@@ -43,7 +43,7 @@ static void WPOS_printf(char *fmt, ...)
 	  fprintf(stdout,"%s",msg);
 	  if(fInfo==NULL)
 	  {
-		  fInfo=fopen("WPOS_RunInfo.txt","w+");
+		  fInfo=fopen("WPS_RunInfo.txt","w+");
 	  }
 	  if(fInfo!=NULL)
 	  {
@@ -51,7 +51,7 @@ static void WPOS_printf(char *fmt, ...)
 		  fflush(fInfo);
 	  }
 }
-#define printf WPOS_printf
+#define printf WPS_printf
 
 static void fault(char *fmt, ...)
 {
@@ -90,7 +90,7 @@ void app_out_ex_clear()
 void app_out_ex_set(int nID,double var)
 {
 	if (nID<0||nID>EX_LEN)
-		app_err(WPOS_EXIT_PARAERROR,"参数错误");
+		app_err(WPS_EXIT_PARAERROR,"参数错误");
 	ex[nID-1]=var;
 }
 void app_out_element(FILE* f,double var)
@@ -133,30 +133,30 @@ void app_out_array(app* me,int nPJID,int nItemID,int nValueType,int nDate,int nN
 void app_stat_wind_power( double *dapower, int nCount, double dPowerMax, double *daPDF, double *daCDF, double *dminoutput,double *dmaxoutput,double *dcapacityfactor, double dconfidence_min, double dconfidence_max)
 {
 	int i,j;
-	double dstep=dPowerMax/WPOS_DISTRIBUTION_INTERVAL;
+	double dstep=dPowerMax/WPS_DISTRIBUTION_INTERVAL;
 	double *dapowertemp;
 	double dtemp;
 	double dmean=0;
 
 	dapowertemp=(double*)malloc(sizeof(double)*nCount);
 	memset(dapowertemp,0,sizeof(double)*nCount);
-	memset(daPDF,0,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
-	memset(daCDF,0,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+	memset(daPDF,0,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
+	memset(daCDF,0,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 
 	//统计PDF
 	for(i=0;i<nCount;i++)	
 	{
 		j=util_double2int(dapower[i]/dstep);
-		if (j>=WPOS_DISTRIBUTION_INTERVAL)
+		if (j>=WPS_DISTRIBUTION_INTERVAL)
 		{
-			j=WPOS_DISTRIBUTION_INTERVAL-1;
+			j=WPS_DISTRIBUTION_INTERVAL-1;
 		}
 		daPDF[j]=daPDF[j]+1.0/nCount;
 		dmean+=dapower[i]/nCount;
 	}
 	//统计CDF
 	daCDF[0]=daPDF[0];
-	for(i=1;i<WPOS_DISTRIBUTION_INTERVAL;i++)	
+	for(i=1;i<WPS_DISTRIBUTION_INTERVAL;i++)	
 	{
 		daCDF[i]=daCDF[i-1]+daPDF[i];
 	}
@@ -198,8 +198,8 @@ void app_out_wind_power_stat( app* me )
 	int napowerall[POINTS_PER_DAY*DAYS_PER_YEAR]={0};
 	double var[POINTS_PER_DAY]={0};
 	int nBeginYear=0,nEndYear=0;
-	double daPDF[WPOS_DISTRIBUTION_INTERVAL]={0};
-	double daCDF[WPOS_DISTRIBUTION_INTERVAL]={0};
+	double daPDF[WPS_DISTRIBUTION_INTERVAL]={0};
+	double daCDF[WPS_DISTRIBUTION_INTERVAL]={0};
 	double dminoutput,dmaxoutput,dmeanoutput,dPowerMax,dPowerMaxall,dmaxoutputSigma;
 	double dPosRegulation[POINTS_PER_DAY]={0};
 	double dNegRegulation[POINTS_PER_DAY]={0};
@@ -216,9 +216,9 @@ void app_out_wind_power_stat( app* me )
 
 
 	//由于CDF和PDF都需要通过var输出，所以这里规定其长度不能大于var
-	if (WPOS_DISTRIBUTION_INTERVAL>POINTS_PER_DAY-4)
+	if (WPS_DISTRIBUTION_INTERVAL>POINTS_PER_DAY-4)
 	{
-		app_err(WPOS_EXIT_PARAERROR,"输入参数有误");
+		app_err(WPS_EXIT_PARAERROR,"输入参数有误");
 	}
 
 	nBeginYear=(me->nStartDate/10000);
@@ -276,7 +276,7 @@ void app_out_wind_power_stat( app* me )
 			if (nCount>0)
 			{
 				dPowerMaxall+=dPowerMax;
-				app_stat_wind_power(dapower,nCount, dPowerMax,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_OUTPUT_CONFIDENCE,WPOS_MAX_OUTPUT_CONFIDENCE);
+				app_stat_wind_power(dapower,nCount, dPowerMax,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_OUTPUT_CONFIDENCE,WPS_MAX_OUTPUT_CONFIDENCE);
 				dmaxoutputSigma+=dmaxoutput;
 				app_out_ex_clear();
 				app_out_ex_set(1,me->nTimes);
@@ -287,9 +287,9 @@ void app_out_wind_power_stat( app* me )
 				var[POINTS_PER_DAY-3]=dminoutput;
 				var[POINTS_PER_DAY-2]=dmaxoutput;
 				var[POINTS_PER_DAY-1]=dmeanoutput;
-				memcpy(var,daPDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+				memcpy(var,daPDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 				app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_STAT_PDF,nYear*10000+101,nYear*10000+10101,var,0);
-				memcpy(var,daCDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+				memcpy(var,daCDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 				app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_STAT_CDF,nYear*10000+101,nYear*10000+10101,var,0);
 			}
 		}
@@ -305,7 +305,7 @@ void app_out_wind_power_stat( app* me )
 		}
 		if (nCount>0)
 		{
-			app_stat_wind_power(dapower,nCount, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_OUTPUT_CONFIDENCE,WPOS_MAX_OUTPUT_CONFIDENCE);
+			app_stat_wind_power(dapower,nCount, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_OUTPUT_CONFIDENCE,WPS_MAX_OUTPUT_CONFIDENCE);
 			app_out_ex_clear();
 			app_out_ex_set(1,me->nTimes);
 			app_out_ex_set(2,dPowerMaxall);
@@ -314,9 +314,9 @@ void app_out_wind_power_stat( app* me )
 			var[POINTS_PER_DAY-3]=dminoutput;
 			var[POINTS_PER_DAY-2]=dmaxoutput;
 			var[POINTS_PER_DAY-1]=dmeanoutput;
-			memcpy(var,daPDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+			memcpy(var,daPDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 			app_out_array(me,me->nPJID,0,RT_WIND_ALL_STAT_PDF,nYear*10000+101,nYear*10000+10101,var,0);
-			memcpy(var,daCDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+			memcpy(var,daCDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 			app_out_array(me,me->nPJID,0,RT_WIND_ALL_STAT_CDF,nYear*10000+101,nYear*10000+10101,var,0);
 			//输出风电场典型出力
 			memset(dPosRegulation,0,sizeof(double)*POINTS_PER_DAY);
@@ -430,7 +430,7 @@ void app_out_wind_power_stat( app* me )
 }
 
 //该函数与app_out_wind_power_stat相同，只是按月统计输出，需要在mtx结构体里读取，模拟无效的mtx也计入统计中。
-void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TIMES],int nStartDate, int nEndDate) 
+void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPS_SIMULATION_TIMES],int nStartDate, int nEndDate) 
 {
 	int i,j,nCount=0,k,l,nWindFarm,nCount2;
 	int nDate,nmonth;
@@ -442,8 +442,8 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 	int *napowerall;
 	double var[POINTS_PER_DAY]={0};
 	int nBeginYear=0,nEndYear=0;
-	double daPDF[WPOS_DISTRIBUTION_INTERVAL]={0};
-	double daCDF[WPOS_DISTRIBUTION_INTERVAL]={0};
+	double daPDF[WPS_DISTRIBUTION_INTERVAL]={0};
+	double daCDF[WPS_DISTRIBUTION_INTERVAL]={0};
 	double dminoutput,dmaxoutput,dmeanoutput,dPowerMax,dPowerMaxall,dmaxoutputSigma;
 	double dPosRegulation[POINTS_PER_DAY]={0};
 	double dNegRegulation[POINTS_PER_DAY]={0};
@@ -458,27 +458,27 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 	unit_power* pUnitPower;
 	regulation * pRegulationPro;
 
-	daLoad=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	dapower=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	dapowerall=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	napowerall=(int*)malloc(sizeof(int)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+	daLoad=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	dapower=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	dapowerall=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	napowerall=(int*)malloc(sizeof(int)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 
 	//由于CDF和PDF都需要通过var输出，所以这里规定其长度不能大于var
-	if (WPOS_DISTRIBUTION_INTERVAL>POINTS_PER_DAY-4)
+	if (WPS_DISTRIBUTION_INTERVAL>POINTS_PER_DAY-4)
 	{
-		app_err(WPOS_EXIT_PARAERROR,"输入参数有误");
+		app_err(WPS_EXIT_PARAERROR,"输入参数有误");
 	}
 
 	nmonth= idate_month_idx_of_year(nStartDate);
 	nDate=nStartDate;
 
 	dPowerMaxall=0;dmaxoutputSigma=0;
-	memset(dapowerall,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	memset(napowerall,0,sizeof(int)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+	memset(dapowerall,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	memset(napowerall,0,sizeof(int)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 	nWindFarm=0;
 	for(i=0;i<me->aUnits.n;i++)
 	{
-		memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+		memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 		pUnit=(unit*)(me->aUnits.buf[i]);
 		pUnitPara=app_cur_unit_para(pUnit,nDate);
 		if (pUnitPara==NULL) continue;
@@ -488,7 +488,7 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 		nCount=0;
 		dPowerMax=pUnitPara->dPowerMax;
 		nWindFarm++;
-		for (l=0;l<WPOS_SIMULATION_TIMES;l++)
+		for (l=0;l<WPS_SIMULATION_TIMES;l++)
 		{
 			for (k=1;k<= pmWindPower[l]->n;k++)
 			{
@@ -502,7 +502,7 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 		if (nCount>0)
 		{
 			dPowerMaxall+=dPowerMax;
-			app_stat_wind_power(dapower,nCount, dPowerMax,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_OUTPUT_CONFIDENCE,WPOS_MAX_OUTPUT_CONFIDENCE);
+			app_stat_wind_power(dapower,nCount, dPowerMax,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_OUTPUT_CONFIDENCE,WPS_MAX_OUTPUT_CONFIDENCE);
 			dmaxoutputSigma+=dmaxoutput;
 			app_out_ex_clear();
 			app_out_ex_set(1,me->nTimes);
@@ -514,14 +514,14 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 			var[POINTS_PER_DAY-3]=dminoutput;
 			var[POINTS_PER_DAY-2]=dmaxoutput;
 			var[POINTS_PER_DAY-1]=dmeanoutput;
-			memcpy(var,daPDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+			memcpy(var,daPDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 			app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_STAT_PDF,nStartDate,nEndDate,var,0);
-			memcpy(var,daCDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+			memcpy(var,daCDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 			app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_STAT_CDF,nStartDate,nEndDate,var,0);
 		}
 	}
 	
-	memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+	memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 	for(j=0;j<nCount;j++)	
 	{
 		if (napowerall[j]==1)
@@ -532,7 +532,7 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 	if (nCount>0)
 	{
 		//输出风电场总体统计参数
-		app_stat_wind_power(dapower,nCount, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_OUTPUT_CONFIDENCE,WPOS_MAX_OUTPUT_CONFIDENCE);
+		app_stat_wind_power(dapower,nCount, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_OUTPUT_CONFIDENCE,WPS_MAX_OUTPUT_CONFIDENCE);
 		app_out_ex_clear();
 		app_out_ex_set(1,me->nTimes);
 		app_out_ex_set(2,dPowerMaxall);
@@ -542,9 +542,9 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 		var[POINTS_PER_DAY-3]=dminoutput;
 		var[POINTS_PER_DAY-2]=dmaxoutput;
 		var[POINTS_PER_DAY-1]=dmeanoutput;
-		memcpy(var,daPDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+		memcpy(var,daPDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 		app_out_array(me,me->nPJID,0,RT_WIND_ALL_STAT_PDF,nStartDate,nEndDate,var,0);
-		memcpy(var,daCDF,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+		memcpy(var,daCDF,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 		app_out_array(me,me->nPJID,0,RT_WIND_ALL_STAT_CDF,nStartDate,nEndDate,var,0);
 		//输出风电场典型出力
 		memset(dPosRegulation,0,sizeof(double)*POINTS_PER_DAY);
@@ -554,9 +554,9 @@ void app_out_wind_power_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TI
 		memset(dMaxHourlyOutput,0,sizeof(double)*POINTS_PER_DAY);
 		memset(dMinHourlyOutput,0,sizeof(double)*POINTS_PER_DAY);
 		memset(dAverageHourlyOutput,0,sizeof(double)*POINTS_PER_DAY);
-		memset(daLoad,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+		memset(daLoad,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 		nCount2=0;
-		for (l=0;l<WPOS_SIMULATION_TIMES;l++)
+		for (l=0;l<WPS_SIMULATION_TIMES;l++)
 		{
 			for (nDate=nStartDate;nDate<nEndDate;nDate=idate_next_day(nDate))
 			{
@@ -676,8 +676,8 @@ void app_out_wind_fpower_stat( app* me)
 	int* napowerall;
 	double var[POINTS_PER_DAY]={0};
 	int nBeginYear=0,nEndYear=0;
-	double daPos[WPOS_DISTRIBUTION_INTERVAL]={0};
-	double daNeg[WPOS_DISTRIBUTION_INTERVAL]={0};
+	double daPos[WPS_DISTRIBUTION_INTERVAL]={0};
+	double daNeg[WPS_DISTRIBUTION_INTERVAL]={0};
 	double daParameter[6]={0};//里面是6个备用关键参数，分别是正调峰、反调峰以及平均情形下峰荷正备用以及谷荷负备用的值。
 	double dPowerMax,dPowerMaxall,dmaxoutputSigma;
 	double *daLoad;
@@ -765,8 +765,8 @@ void app_out_wind_fpower_stat( app* me)
 		dLoadMax=0;
 		if (nCount>0)
 		{
-			memset(daPos,0,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
-			memset(daNeg,0,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+			memset(daPos,0,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
+			memset(daNeg,0,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 			memset(daParameter,0,sizeof(double)*6);
 			memset(daLoad,0,sizeof(double)*POINTS_PER_DAY*DAYS_PER_YEAR);
 			nCount2=0;
@@ -839,7 +839,7 @@ void app_out_wind_fpower_stat( app* me)
 			app_out_ex_set(4,10);
 			app_out_ex_set(5,0);
 			memset(var,0,sizeof(double)*POINTS_PER_DAY);
-			memcpy(var,daPos,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+			memcpy(var,daPos,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 			app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_ALL_RESERVE,nYear*10000+101,nYear*10000+10101,var,0);
 			app_out_ex_clear();
 			app_out_ex_set(1,me->nTimes);
@@ -848,7 +848,7 @@ void app_out_wind_fpower_stat( app* me)
 			app_out_ex_set(4,11);
 			app_out_ex_set(5,0);
 			memset(var,0,sizeof(double)*POINTS_PER_DAY);
-			memcpy(var,daNeg,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+			memcpy(var,daNeg,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 			app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_ALL_RESERVE,nYear*10000+101,nYear*10000+10101,var,0);
 		}
 	}
@@ -861,8 +861,8 @@ void app_out_wind_fpower_stat( app* me)
 }
 
 //统计风电预测误差。本软件中统计误差均是预测-实际，正数表示预测高了，需要正备用，否则需要负备用。
-void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_TIMES],\
-																mtx* pmWindfPower[WPOS_SIMULATION_TIMES],int nStartDate, int nEndDate)
+void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPS_SIMULATION_TIMES],\
+																mtx* pmWindfPower[WPS_SIMULATION_TIMES],int nStartDate, int nEndDate)
 {
 	int i,j,nCount,k,l,nWindFarm,nCount2;
 	int nDate,nmonth;
@@ -876,8 +876,8 @@ void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_T
 	int* napowerall;
 	double var[POINTS_PER_DAY]={0};
 	int nBeginYear=0,nEndYear=0;
-	double daPos[WPOS_DISTRIBUTION_INTERVAL]={0};
-	double daNeg[WPOS_DISTRIBUTION_INTERVAL]={0};
+	double daPos[WPS_DISTRIBUTION_INTERVAL]={0};
+	double daNeg[WPS_DISTRIBUTION_INTERVAL]={0};
 	double daParameter[6]={0};//里面是6个备用关键参数，分别是正调峰、反调峰以及平均情形下峰荷正备用以及谷荷负备用的值。
 	double dPowerMax,dPowerMaxall,dmaxoutputSigma;
 	double *daLoad;
@@ -885,33 +885,33 @@ void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_T
 	unit_power* pUnitPower;
 	double dLoadMax;
 
-	dapower=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	dapowerall=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	davariation=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	davariationall=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	daLoad=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	napowerall=(int*)malloc(sizeof(int)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+	dapower=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	dapowerall=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	davariation=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	davariationall=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	daLoad=(double*)malloc(sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	napowerall=(int*)malloc(sizeof(int)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 
 	//由于CDF和PDF都需要通过var输出，所以这里规定其长度不能大于var
-	if (WPOS_DISTRIBUTION_INTERVAL>POINTS_PER_DAY-4)
+	if (WPS_DISTRIBUTION_INTERVAL>POINTS_PER_DAY-4)
 	{
-		app_err(WPOS_EXIT_PARAERROR,"输入参数有误");
+		app_err(WPS_EXIT_PARAERROR,"输入参数有误");
 	}
 
 	nmonth= idate_month_idx_of_year(nStartDate);
 	nDate=nStartDate;
 
 	dPowerMaxall=0;dmaxoutputSigma=0;
-	memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	memset(dapowerall,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	memset(davariation,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	memset(davariationall,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	memset(daLoad,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
-	memset(napowerall,0,sizeof(int)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+	memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	memset(dapowerall,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	memset(davariation,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	memset(davariationall,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	memset(daLoad,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
+	memset(napowerall,0,sizeof(int)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 	nWindFarm=0;
 	for(i=0;i<me->aUnits.n;i++)
 	{
-		memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+		memset(dapower,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 		pUnit=(unit*)(me->aUnits.buf[i]);
 		pUnitPara=app_cur_unit_para(pUnit,nDate);
 		if (pUnitPara==NULL) continue;
@@ -921,7 +921,7 @@ void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_T
 		nCount=0;
 		dPowerMax=pUnitPara->dPowerMax;
 		nWindFarm++;
-		for (l=0;l<WPOS_SIMULATION_TIMES;l++)
+		for (l=0;l<WPS_SIMULATION_TIMES;l++)
 		{
 			for (k=1;k<= pmWindPower[l]->n;k++)
 			{
@@ -951,12 +951,12 @@ void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_T
 	if (nCount>0)
 	{
 		//准备各种参数
-		memset(daPos,0,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
-		memset(daNeg,0,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+		memset(daPos,0,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
+		memset(daNeg,0,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 		memset(daParameter,0,sizeof(double)*6);
-		memset(daLoad,0,sizeof(double)*POINTS_PER_DAY*31*WPOS_SIMULATION_TIMES);
+		memset(daLoad,0,sizeof(double)*POINTS_PER_DAY*31*WPS_SIMULATION_TIMES);
 		nCount2=0;
-		for (l=0;l<WPOS_SIMULATION_TIMES;l++)
+		for (l=0;l<WPS_SIMULATION_TIMES;l++)
 		{
 			for (nDate=nStartDate;nDate<nEndDate;nDate=idate_next_day(nDate))
 			{
@@ -1028,7 +1028,7 @@ void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_T
 		app_out_ex_set(4,10);
 		app_out_ex_set(5,nmonth);
 		memset(var,0,sizeof(double)*POINTS_PER_DAY);
-		memcpy(var,daPos,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+		memcpy(var,daPos,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 		app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_ALL_RESERVE,nStartDate,nEndDate,var,0);
 		app_out_ex_clear();
 		app_out_ex_set(1,me->nTimes);
@@ -1037,7 +1037,7 @@ void app_out_wind_fpower_stat_month( app* me, mtx* pmWindPower[WPOS_SIMULATION_T
 		app_out_ex_set(4,11);
 		app_out_ex_set(5,nmonth);
 		memset(var,0,sizeof(double)*POINTS_PER_DAY);
-		memcpy(var,daNeg,sizeof(double)*WPOS_DISTRIBUTION_INTERVAL);
+		memcpy(var,daNeg,sizeof(double)*WPS_DISTRIBUTION_INTERVAL);
 		app_out_array(me,me->nPJID,pUnit->nId,RT_WIND_ALL_RESERVE,nStartDate,nEndDate,var,0);
 	}
 
@@ -1057,19 +1057,19 @@ void	app_stat_wind_variation(double *dapower,double *davariation,double *daLoad,
 	double dMaxPos,dMaxNeg,dmeanPos,dmeanNeg;
 	double dminoutput,dmaxoutput,dmeanoutput;
 	double dDaily[POINTS_PER_DAY]={0};
-	double daPDF[WPOS_DISTRIBUTION_INTERVAL]={0};
-	double daCDF[WPOS_DISTRIBUTION_INTERVAL]={0};
+	double daPDF[WPS_DISTRIBUTION_INTERVAL]={0};
+	double daCDF[WPS_DISTRIBUTION_INTERVAL]={0};
 	int nPeakPoint,nValleyPoint;
 	//首先统计各预测水平下风电需求的正负备用值
 	daVariationtemp=(double*)malloc(sizeof(double)*nCount);
 	dapowertemp=(double*)malloc(sizeof(double)*nCount);
 	memset(daVariationtemp,0,sizeof(double)*nCount);
-	for (i=0;i<WPOS_DISTRIBUTION_INTERVAL;i++)
+	for (i=0;i<WPS_DISTRIBUTION_INTERVAL;i++)
 	{
 		nCount2=0;
 		for (l=0;l<nCount;l++)
 		{
-			if ((dapower[l]/(dPowerMaxall+TINY)<((double)(i+1))/WPOS_DISTRIBUTION_INTERVAL)&&(dapower[l]/(dPowerMaxall+TINY)>=((double)(i))/WPOS_DISTRIBUTION_INTERVAL))
+			if ((dapower[l]/(dPowerMaxall+TINY)<((double)(i+1))/WPS_DISTRIBUTION_INTERVAL)&&(dapower[l]/(dPowerMaxall+TINY)>=((double)(i))/WPS_DISTRIBUTION_INTERVAL))
 			{
 				daVariationtemp[nCount2]=davariation[l];
 				nCount2++;
@@ -1098,10 +1098,10 @@ void	app_stat_wind_variation(double *dapower,double *davariation,double *daLoad,
 		daVariationtemp[i]=davariation[nPeakPoint+nCount2];
 		nCount2+=POINTS_PER_DAY;
 	}
-	app_stat_wind_power(dapowertemp,nDay,dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_REGULATION_CONFIDENCE,WPOS_MAX_REGULATION_CONFIDENCE);
+	app_stat_wind_power(dapowertemp,nDay,dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_REGULATION_CONFIDENCE,WPS_MAX_REGULATION_CONFIDENCE);
 	app_stat_wind_reserve(daVariationtemp,nDay,&dMaxPos,&dMaxNeg,&dmeanPos,&dmeanNeg);
-	daParameter[0]=daPos[(int)(dmaxoutput/dPowerMaxall*WPOS_DISTRIBUTION_INTERVAL)];//统计正调峰峰荷正备用容量
-	daParameter[4]=daPos[(int)(dminoutput/dPowerMaxall*WPOS_DISTRIBUTION_INTERVAL)];//统计反调峰峰荷正备用容量
+	daParameter[0]=daPos[(int)(dmaxoutput/dPowerMaxall*WPS_DISTRIBUTION_INTERVAL)];//统计正调峰峰荷正备用容量
+	daParameter[4]=daPos[(int)(dminoutput/dPowerMaxall*WPS_DISTRIBUTION_INTERVAL)];//统计反调峰峰荷正备用容量
 	daParameter[2]=dmeanPos;//统计峰荷平均正备用容量
 	//统计谷荷是的风电出力，确定谷荷时最大最小
 	nCount2=0;
@@ -1118,12 +1118,12 @@ void	app_stat_wind_variation(double *dapower,double *davariation,double *daLoad,
 		daVariationtemp[i]=davariation[nValleyPoint+nCount2];
 		nCount2+=POINTS_PER_DAY;
 	}
-	app_stat_wind_power(dapowertemp,nDay,dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_REGULATION_CONFIDENCE,WPOS_MAX_REGULATION_CONFIDENCE);
+	app_stat_wind_power(dapowertemp,nDay,dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_REGULATION_CONFIDENCE,WPS_MAX_REGULATION_CONFIDENCE);
 	app_stat_wind_reserve(daVariationtemp,nDay,&dMaxPos,&dMaxNeg,&dmeanPos,&dmeanNeg);
-	daParameter[1]=daNeg[(int)(dminoutput/dPowerMaxall*WPOS_DISTRIBUTION_INTERVAL)];//统计峰荷正调峰谷荷负备用容量
-	daParameter[5]=daNeg[(int)(dmaxoutput/dPowerMaxall*WPOS_DISTRIBUTION_INTERVAL)];//统计峰荷反调峰谷荷负备用容量
+	daParameter[1]=daNeg[(int)(dminoutput/dPowerMaxall*WPS_DISTRIBUTION_INTERVAL)];//统计峰荷正调峰谷荷负备用容量
+	daParameter[5]=daNeg[(int)(dmaxoutput/dPowerMaxall*WPS_DISTRIBUTION_INTERVAL)];//统计峰荷反调峰谷荷负备用容量
 	daParameter[3]=dmeanNeg;//统计谷荷平均负备用容量
-	for (i=0;i<WPOS_DISTRIBUTION_INTERVAL;i++)
+	for (i=0;i<WPS_DISTRIBUTION_INTERVAL;i++)
 	{
 		daPos[i]=daPos[i]/dPowerMaxall;
 		daNeg[i]=daNeg[i]/dPowerMaxall;
@@ -1161,8 +1161,8 @@ void	app_stat_wind_reserve(double *davariation,int nCount, double* dMaxPos,doubl
 				}
 			}
 		}
-		*dMaxNeg=-davariationtemp[util_double2int((1-WPOS_MIN_RESERVE_CONFIDENCE)*nCount)];
-		j=util_double2int(WPOS_MAX_RESERVE_CONFIDENCE*nCount);	
+		*dMaxNeg=-davariationtemp[util_double2int((1-WPS_MIN_RESERVE_CONFIDENCE)*nCount)];
+		j=util_double2int(WPS_MAX_RESERVE_CONFIDENCE*nCount);	
 		if (j==nCount) j--;
 		*dMaxPos=davariationtemp[j];
 		*dmeanPos=0; *dmeanNeg=0;
@@ -1293,7 +1293,7 @@ void app_stat_wind_typical_curve(app* me, double *daLoad,double *dapower,int nCo
 }
 
 //设定生成日典型曲线时当负荷接近最高负荷或最低负荷一定裕度下，风电直接置最大或最小出力。
-#define WPOS_WIND_ALL_TYPICAL_SIMULATE_LIMIT 0.1
+#define WPS_WIND_ALL_TYPICAL_SIMULATE_LIMIT 0.1
 //设置理论正调峰反调峰出力曲线
 void app_stat_wind_daily_curve(app* me, double *dAverageLoad,double *dapower,int nCount,double dPowerMaxall,\
 	double *dPosRegulation,double *dNegRegulation,double *dMaxOutput,\
@@ -1301,24 +1301,24 @@ void app_stat_wind_daily_curve(app* me, double *dAverageLoad,double *dapower,int
 {
 	int j,i,nDays;
 	double dMax,dMin,dPeakValley;
-	double daPDF[WPOS_DISTRIBUTION_INTERVAL]={0};
-	double daCDF[WPOS_DISTRIBUTION_INTERVAL]={0};
+	double daPDF[WPS_DISTRIBUTION_INTERVAL]={0};
+	double daCDF[WPS_DISTRIBUTION_INTERVAL]={0};
 	double dmaxoutput,dminoutput,dmeanoutput;
 	double *daHourlyPower;
 
 	nDays=(int)nCount/POINTS_PER_DAY;
 	
-	app_stat_wind_power(dapower,nCount, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_REGULATION_CONFIDENCE,WPOS_MAX_REGULATION_CONFIDENCE);
+	app_stat_wind_power(dapower,nCount, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_REGULATION_CONFIDENCE,WPS_MAX_REGULATION_CONFIDENCE);
 	dMax=app_stat_load_peak_valley(dAverageLoad,POINTS_PER_DAY,1);
 	dMin=app_stat_load_peak_valley(dAverageLoad,POINTS_PER_DAY,2);
 	dPeakValley=app_stat_load_peak_valley(dAverageLoad,POINTS_PER_DAY,0);
 	for(j=0;j<POINTS_PER_DAY;j++)	
 	{
-		if (dAverageLoad[j]-dMin<WPOS_WIND_ALL_TYPICAL_SIMULATE_LIMIT*dPeakValley)
+		if (dAverageLoad[j]-dMin<WPS_WIND_ALL_TYPICAL_SIMULATE_LIMIT*dPeakValley)
 		{
 			dNegRegulation[j]=dmaxoutput;dPosRegulation[j]=dminoutput;
 		}
-		else if (dMax-dAverageLoad[j]<WPOS_WIND_ALL_TYPICAL_SIMULATE_LIMIT*dPeakValley)
+		else if (dMax-dAverageLoad[j]<WPS_WIND_ALL_TYPICAL_SIMULATE_LIMIT*dPeakValley)
 		{
 			dNegRegulation[j]=dminoutput;dPosRegulation[j]=dmaxoutput;
 		}
@@ -1336,7 +1336,7 @@ void app_stat_wind_daily_curve(app* me, double *dAverageLoad,double *dapower,int
 		{
 			daHourlyPower[i]=dapower[i*POINTS_PER_DAY+j];
 		}
-		app_stat_wind_power(daHourlyPower,nDays, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPOS_MIN_REGULATION_CONFIDENCE,WPOS_MAX_REGULATION_CONFIDENCE);
+		app_stat_wind_power(daHourlyPower,nDays, dPowerMaxall,daPDF,daCDF,&dminoutput,&dmaxoutput,&dmeanoutput,WPS_MIN_REGULATION_CONFIDENCE,WPS_MAX_REGULATION_CONFIDENCE);
 		dMaxOutput[j]=dmaxoutput;
 		dMinOutput[j]=dminoutput;
 		dAverageOutput[j]=dmeanoutput;
